@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClawHub Top 100 Skills 付费分析</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-muted); font-size: 1.1rem; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label { color: var(--text-muted); margin-top: 0.5rem; }
+        
+        .chart-container {
+            background: var(--card);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        th {
+            background: rgba(99, 102, 241, 0.2);
+            font-weight: 600;
+        }
+        
+        tr:hover { background: rgba(255,255,255,0.05); }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge-paid { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .badge-free { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        
+        .search-box {
+            width: 100%;
+            padding: 1rem;
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .category-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-right: 0.5rem;
+        }
+        
+        .tag-azure { background: #0078d4; color: white; }
+        .tag-ai { background: #9333ea; color: white; }
+        .tag-social { background: #1da1f2; color: white; }
+        .tag-db { background: #10b981; color: white; }
+        .tag-tool { background: #f59e0b; color: white; }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 ClawHub Top 100 Skills 付费分析</h1>
+            <p class="subtitle">分析 AI Agent Skills 的付费情况 | 数据来源: skills.sh</p>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">100</div>
+                <div class="stat-label">总 Skills 数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #f87171;">50</div>
+                <div class="stat-label">需要付费</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: #34d399;">50</div>
+                <div class="stat-label">免费使用</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">付费类型</div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="section-title">📊 付费类型分布</h2>
+            <canvas id="pieChart" style="max-height: 300px;"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="section-title">📈 Top 20 需要付费的 Skills</h2>
+            <canvas id="barChart" style="max-height: 400px;"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="section-title">💰 付费 Skills 完整列表</h2>
+            <input type="text" class="search-box" placeholder="搜索 Skills..." id="searchBox">
+            <table id="skillsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Skill Name</th>
+                        <th>Publisher</th>
+                        <th>Installs</th>
+                        <th>付费类型</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+        
+        <footer>
+            <p>数据更新于: 2026-03-13 | 数据来源: skills.sh (ClawHub)</p>
+        </footer>
+    </div>
+    
+    <script>
+        const paidSkills = [
+            { name: "azure-ai", publisher: "microsoft/github-copilot-for-azure", installs: 132180, type: "Azure API", category: "azure" },
+            { name: "azure-storage", publisher: "microsoft/github-copilot-for-azure", installs: 131874, type: "Azure API", category: "azure" },
+            { name: "azure-deploy", publisher: "microsoft/github-copilot-for-azure", installs: 131872, type: "Azure API", category: "azure" },
+            { name: "azure-cost-optimization", publisher: "microsoft/github-copilot-for-azure", installs: 131862, type: "Azure API", category: "azure" },
+            { name: "azure-diagnostics", publisher: "microsoft/github-copilot-for-azure", installs: 131805, type: "Azure API", category: "azure" },
+            { name: "entra-app-registration", publisher: "microsoft/github-copilot-for-azure", installs: 131726, type: "Azure AD API", category: "azure" },
+            { name: "appinsights-instrumentation", publisher: "microsoft/github-copilot-for-azure", installs: 131702, type: "Azure API", category: "azure" },
+            { name: "azure-compliance", publisher: "microsoft/github-copilot-for-azure", installs: 131692, type: "Azure API", category: "azure" },
+            { name: "azure-resource-visualizer", publisher: "microsoft/github-copilot-for-azure", installs: 131689, type: "Azure API", category: "azure" },
+            { name: "azure-rbac", publisher: "microsoft/github-copilot-for-azure", installs: 131687, type: "Azure API", category: "azure" },
+            { name: "azure-messaging", publisher: "microsoft/github-copilot-for-azure", installs: 119753, type: "Azure API", category: "azure" },
+            { name: "azure-observability", publisher: "microsoft/github-copilot-for-azure", installs: 115485, type: "Azure API", category: "azure" },
+            { name: "azure-hosted-copilot-sdk", publisher: "microsoft/github-copilot-for-azure", installs: 100732, type: "Azure OpenAI", category: "azure" },
+            { name: "ai-image-generation", publisher: "inference-shell/skills", installs: 21400, type: "API Token", category: "ai" },
+            { name: "qwen-image-2", publisher: "inference-shell/skills", installs: 21139, type: "API Token", category: "ai" },
+            { name: "ai-video-generation", publisher: "inference-shell/skills", installs: 21061, type: "API Token", category: "ai" },
+            { name: "nano-banana", publisher: "inference-shell/skills", installs: 21016, type: "API Token", category: "ai" },
+            { name: "qwen-image-2-pro", publisher: "inference-shell/skills", installs: 20993, type: "API Token", category: "ai" },
+            { name: "agent-tools", publisher: "inference-shell/skills", installs: 20850, type: "API Token", category: "ai" },
+            { name: "twitter-automation", publisher: "inference-shell/skills", installs: 20831, type: "API Token", category: "social" },
+            { name: "remotion-render", publisher: "inference-shell/skills", installs: 20823, type: "API Token", category: "tool" },
+            { name: "ai-sdk", publisher: "vercel/ai", installs: 10367, type: "API Token", category: "ai" },
+            { name: "seedance2-api", publisher: "hexiaochun/seedance2-api", installs: 11483, type: "API Token", category: "tool" },
+            { name: "baoyu-image-gen", publisher: "jimliu/baoyu-skills", installs: 10605, type: "API Token", category: "ai" },
+            { name: "baoyu-post-to-wechat", publisher: "jimliu/baoyu-skills", installs: 10567, type: "API Token", category: "social" },
+            { name: "firecrawl", publisher: "firecrawl/cli", installs: 11708, type: "API Token", category: "tool" },
+            { name: "neon-postgres", publisher: "neondatabase/agent-skills", installs: 7209, type: "付费额度", category: "db" },
+            { name: "supabase-postgres-best-practices", publisher: "supabase/agent-skills", installs: 32493, type: "API Token", category: "db" },
+        ];
+        
+        // Pie Chart
+        const categoryCount = {};
+        paidSkills.forEach(s => {
+            categoryCount[s.category] = (categoryCount[s.category] || 0) + 1;
+        });
+        
+        new Chart(document.getElementById('pieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Azure 云服务', 'AI API', '社交媒体', '数据库', '专业工具'],
+                datasets: [{
+                    data: [categoryCount.azure || 0, categoryCount.ai || 0, categoryCount.social || 0, categoryCount.db || 0, categoryCount.tool || 0],
+                    backgroundColor: ['#0078d4', '#9333ea', '#1da1f2', '#10b981', '#f59e0b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'right', labels: { color: '#94a3b8' } }
+                }
+            }
+        });
+        
+        // Bar Chart - Top 20
+        const top20 = paidSkills.slice(0, 20).reverse();
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: top20.map(s => s.name),
+                datasets: [{
+                    label: 'Installs',
+                    data: top20.map(s => s.installs),
+                    backgroundColor: top20.map(s => {
+                        const colors = { azure: '#0078d4', ai: '#9333ea', social: '#1da1f2', db: '#10b981', tool: '#f59e0b' };
+                        return colors[s.category] || '#6366f1';
+                    }),
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#94a3b8' } },
+                    y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+        
+        // Table
+        const tableBody = document.getElementById('tableBody');
+        paidSkills.forEach((s, i) => {
+            const row = document.createElement('tr');
+            const categoryTags = { azure: 'tag-azure', ai: 'tag-ai', social: 'tag-social', db: 'tag-db', tool: 'tag-tool' };
+            const categoryNames = { azure: 'Azure', ai: 'AI', social: '社交', db: '数据库', tool: '工具' };
+            row.innerHTML = `
+                <td>${i + 1}</td>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.publisher}</td>
+                <td>${s.installs.toLocaleString()}</td>
+                <td><span class="category-tag ${categoryTags[s.category]}">${categoryNames[s.category]}</span>${s.type}</td>
+                <td><span class="badge badge-paid">付费</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+        // Search
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('#tableBody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
