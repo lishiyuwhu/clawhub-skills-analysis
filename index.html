@@ -1,324 +1,313 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClawHub Top 100 Skills 付费分析</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary: #6366f1;
-            --secondary: #8b5cf6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg: #0f172a;
-            --card: #1e293b;
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        header {
-            text-align: center;
-            padding: 3rem 0;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .subtitle { color: var(--text-muted); font-size: 1.1rem; }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-        
-        .stat-card {
-            background: var(--card);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .stat-label { color: var(--text-muted); margin-top: 0.5rem; }
-        
-        .chart-container {
-            background: var(--card);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin: 2rem 0;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--text);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card);
-            border-radius: 1rem;
-            overflow: hidden;
-        }
-        
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        th {
-            background: rgba(99, 102, 241, 0.2);
-            font-weight: 600;
-        }
-        
-        tr:hover { background: rgba(255,255,255,0.05); }
-        
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .badge-paid { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-        .badge-free { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-        
-        .search-box {
-            width: 100%;
-            padding: 1rem;
-            background: var(--card);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 0.5rem;
-            color: var(--text);
-            font-size: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .search-box:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .category-tag {
-            display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            margin-right: 0.5rem;
-        }
-        
-        .tag-azure { background: #0078d4; color: white; }
-        .tag-ai { background: #9333ea; color: white; }
-        .tag-social { background: #1da1f2; color: white; }
-        .tag-db { background: #10b981; color: white; }
-        .tag-tool { background: #f59e0b; color: white; }
-        
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-            margin-top: 3rem;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Skills 两大平台 Top 100 分析</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .gradient-bg {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .glow { box-shadow: 0 0 40px rgba(99,102,241,0.3); }
+    .tab-active {
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      color: white;
+    }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>🎯 ClawHub Top 100 Skills 付费分析</h1>
-            <p class="subtitle">分析 AI Agent Skills 的付费情况 | 数据来源: skills.sh</p>
-        </header>
-        
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number">100</div>
-                <div class="stat-label">总 Skills 数</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #f87171;">50</div>
-                <div class="stat-label">需要付费</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" style="color: #34d399;">50</div>
-                <div class="stat-label">免费使用</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">5</div>
-                <div class="stat-label">付费类型</div>
-            </div>
+<body class="gradient-bg min-h-screen text-white">
+  <!-- Header -->
+  <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur-xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          </svg>
         </div>
-        
-        <div class="chart-container">
-            <h2 class="section-title">📊 付费类型分布</h2>
-            <canvas id="pieChart" style="max-height: 300px;"></canvas>
-        </div>
-        
-        <div class="chart-container">
-            <h2 class="section-title">📈 Top 20 需要付费的 Skills</h2>
-            <canvas id="barChart" style="max-height: 400px;"></canvas>
-        </div>
-        
-        <div class="chart-container">
-            <h2 class="section-title">💰 付费 Skills 完整列表</h2>
-            <input type="text" class="search-box" placeholder="搜索 Skills..." id="searchBox">
-            <table id="skillsTable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Skill Name</th>
-                        <th>Publisher</th>
-                        <th>Installs</th>
-                        <th>付费类型</th>
-                        <th>状态</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
-        
-        <footer>
-            <p>数据更新于: 2026-03-13 | 数据来源: skills.sh (ClawHub)</p>
-        </footer>
+        <h1 class="text-xl font-bold">AI Agent Skills 分析</h1>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="switchTab('clawhub')" id="tab-clawhub" class="px-4 py-2 rounded-lg font-medium transition-all tab-active">
+          🦞 ClawHub
+        </button>
+        <button onclick="switchTab('skillssh')" id="tab-skillssh" class="px-4 py-2 rounded-lg font-medium bg-gray-800 hover:bg-gray-700 transition-all">
+          ⚡ Skills.sh
+        </button>
+      </div>
     </div>
-    
-    <script>
-        const paidSkills = [
-            { name: "azure-ai", publisher: "microsoft/github-copilot-for-azure", installs: 132180, type: "Azure API", category: "azure" },
-            { name: "azure-storage", publisher: "microsoft/github-copilot-for-azure", installs: 131874, type: "Azure API", category: "azure" },
-            { name: "azure-deploy", publisher: "microsoft/github-copilot-for-azure", installs: 131872, type: "Azure API", category: "azure" },
-            { name: "azure-cost-optimization", publisher: "microsoft/github-copilot-for-azure", installs: 131862, type: "Azure API", category: "azure" },
-            { name: "azure-diagnostics", publisher: "microsoft/github-copilot-for-azure", installs: 131805, type: "Azure API", category: "azure" },
-            { name: "entra-app-registration", publisher: "microsoft/github-copilot-for-azure", installs: 131726, type: "Azure AD API", category: "azure" },
-            { name: "appinsights-instrumentation", publisher: "microsoft/github-copilot-for-azure", installs: 131702, type: "Azure API", category: "azure" },
-            { name: "azure-compliance", publisher: "microsoft/github-copilot-for-azure", installs: 131692, type: "Azure API", category: "azure" },
-            { name: "azure-resource-visualizer", publisher: "microsoft/github-copilot-for-azure", installs: 131689, type: "Azure API", category: "azure" },
-            { name: "azure-rbac", publisher: "microsoft/github-copilot-for-azure", installs: 131687, type: "Azure API", category: "azure" },
-            { name: "azure-messaging", publisher: "microsoft/github-copilot-for-azure", installs: 119753, type: "Azure API", category: "azure" },
-            { name: "azure-observability", publisher: "microsoft/github-copilot-for-azure", installs: 115485, type: "Azure API", category: "azure" },
-            { name: "azure-hosted-copilot-sdk", publisher: "microsoft/github-copilot-for-azure", installs: 100732, type: "Azure OpenAI", category: "azure" },
-            { name: "ai-image-generation", publisher: "inference-shell/skills", installs: 21400, type: "API Token", category: "ai" },
-            { name: "qwen-image-2", publisher: "inference-shell/skills", installs: 21139, type: "API Token", category: "ai" },
-            { name: "ai-video-generation", publisher: "inference-shell/skills", installs: 21061, type: "API Token", category: "ai" },
-            { name: "nano-banana", publisher: "inference-shell/skills", installs: 21016, type: "API Token", category: "ai" },
-            { name: "qwen-image-2-pro", publisher: "inference-shell/skills", installs: 20993, type: "API Token", category: "ai" },
-            { name: "agent-tools", publisher: "inference-shell/skills", installs: 20850, type: "API Token", category: "ai" },
-            { name: "twitter-automation", publisher: "inference-shell/skills", installs: 20831, type: "API Token", category: "social" },
-            { name: "remotion-render", publisher: "inference-shell/skills", installs: 20823, type: "API Token", category: "tool" },
-            { name: "ai-sdk", publisher: "vercel/ai", installs: 10367, type: "API Token", category: "ai" },
-            { name: "seedance2-api", publisher: "hexiaochun/seedance2-api", installs: 11483, type: "API Token", category: "tool" },
-            { name: "baoyu-image-gen", publisher: "jimliu/baoyu-skills", installs: 10605, type: "API Token", category: "ai" },
-            { name: "baoyu-post-to-wechat", publisher: "jimliu/baoyu-skills", installs: 10567, type: "API Token", category: "social" },
-            { name: "firecrawl", publisher: "firecrawl/cli", installs: 11708, type: "API Token", category: "tool" },
-            { name: "neon-postgres", publisher: "neondatabase/agent-skills", installs: 7209, type: "付费额度", category: "db" },
-            { name: "supabase-postgres-best-practices", publisher: "supabase/agent-skills", installs: 32493, type: "API Token", category: "db" },
-        ];
-        
-        // Pie Chart
-        const categoryCount = {};
-        paidSkills.forEach(s => {
-            categoryCount[s.category] = (categoryCount[s.category] || 0) + 1;
-        });
-        
-        new Chart(document.getElementById('pieChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Azure 云服务', 'AI API', '社交媒体', '数据库', '专业工具'],
-                datasets: [{
-                    data: [categoryCount.azure || 0, categoryCount.ai || 0, categoryCount.social || 0, categoryCount.db || 0, categoryCount.tool || 0],
-                    backgroundColor: ['#0078d4', '#9333ea', '#1da1f2', '#10b981', '#f59e0b'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'right', labels: { color: '#94a3b8' } }
-                }
-            }
-        });
-        
-        // Bar Chart - Top 20
-        const top20 = paidSkills.slice(0, 20).reverse();
-        new Chart(document.getElementById('barChart'), {
-            type: 'bar',
-            data: {
-                labels: top20.map(s => s.name),
-                datasets: [{
-                    label: 'Installs',
-                    data: top20.map(s => s.installs),
-                    backgroundColor: top20.map(s => {
-                        const colors = { azure: '#0078d4', ai: '#9333ea', social: '#1da1f2', db: '#10b981', tool: '#f59e0b' };
-                        return colors[s.category] || '#6366f1';
-                    }),
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#94a3b8' } },
-                    y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                }
-            }
-        });
-        
-        // Table
-        const tableBody = document.getElementById('tableBody');
-        paidSkills.forEach((s, i) => {
-            const row = document.createElement('tr');
-            const categoryTags = { azure: 'tag-azure', ai: 'tag-ai', social: 'tag-social', db: 'tag-db', tool: 'tag-tool' };
-            const categoryNames = { azure: 'Azure', ai: 'AI', social: '社交', db: '数据库', tool: '工具' };
-            row.innerHTML = `
-                <td>${i + 1}</td>
-                <td><strong>${s.name}</strong></td>
-                <td>${s.publisher}</td>
-                <td>${s.installs.toLocaleString()}</td>
-                <td><span class="category-tag ${categoryTags[s.category]}">${categoryNames[s.category]}</span>${s.type}</td>
-                <td><span class="badge badge-paid">付费</span></td>
-            `;
-            tableBody.appendChild(row);
-        });
-        
-        // Search
-        document.getElementById('searchBox').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            document.querySelectorAll('#tableBody tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
-            });
-        });
-    </script>
+  </header>
+
+  <!-- Hero Stats -->
+  <section class="py-12 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gray-800/50 rounded-2xl p-6 border border-gray-700">
+          <p class="text-gray-400 text-sm mb-1">总 Skills 数量</p>
+          <p class="text-3xl font-bold text-indigo-400" id="total-skills">21,576</p>
+        </div>
+        <div class="bg-gray-800/50 rounded-2xl p-6 border border-gray-700">
+          <p class="text-gray-400 text-sm mb-1">免费 Skills 比例</p>
+          <p class="text-3xl font-bold text-green-400" id="free-ratio">55%</p>
+        </div>
+        <div class="bg-gray-800/50 rounded-2xl p-6 border border-gray-700">
+          <p class="text-gray-400 text-sm mb-1">付费 Skills 比例</p>
+          <p class="text-3xl font-bold text-orange-400" id="paid-ratio">45%</p>
+        </div>
+        <div class="bg-gray-800/50 rounded-2xl p-6 border border-gray-700">
+          <p class="text-gray-400 text-sm mb-1">Top 1 下载量</p>
+          <p class="text-3xl font-bold text-purple-400" id="top-downloads">190K</p>
+        </div>
+      </div>
+
+      <!-- Platform Comparison -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-gradient-to-br from-indigo-900/50 to-purple-900/50 rounded-2xl p-6 border border-indigo-500/30">
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-indigo-400"></span>
+            ClawHub.ai 特点
+          </h3>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li>✅ 更偏向个人开发者工具 CLI</li>
+            <li>✅ 很多本地/免费方案 (天气、本地 Whisper)</li>
+            <li>✅ @steipete 是最大贡献者</li>
+            <li>✅ 免费比例更高 (55%)</li>
+          </ul>
+        </div>
+        <div class="bg-gradient-to-br from-orange-900/50 to-red-900/50 rounded-2xl p-6 border border-orange-500/30">
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-orange-400"></span>
+            Skills.sh 特点
+          </h3>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li>⚠️ Azure 微软系绝对主导 (20+ 个)</li>
+            <li>⚠️ Vercel 前端最佳实践很热门</li>
+            <li>⚠️ 企业/云服务导向</li>
+            <li>⚠️ 付费比例更高 (55%)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Table -->
+  <section class="px-6 pb-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="bg-gray-800/50 rounded-2xl border border-gray-700 overflow-hidden">
+        <div class="p-4 border-b border-gray-700 flex items-center justify-between">
+          <h2 class="text-lg font-semibold" id="table-title">ClawHub Top 100 Skills</h2>
+          <div class="flex gap-2">
+            <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm" id="free-badge">55 免费</span>
+            <span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm" id="paid-badge">45 付费</span>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-900/50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">#</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Skill</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">开发者</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">下载量</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">★</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">类型</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700" id="skills-table">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-800 py-6 px-6">
+    <div class="max-w-7xl mx-auto text-center text-gray-400 text-sm">
+      <p>数据来源: clawhub.ai | skills.sh | 分析日期: 2026-03-13</p>
+      <p class="mt-2">Built with OpenClaw + Vercel</p>
+    </div>
+  </footer>
+
+  <script>
+    const clawhubData = [
+      { rank: 1, name: "self-improving-agent", author: "@pskoett", downloads: "190k", stars: "1.9k", type: "免费", desc: "持续学习与改进" },
+      { rank: 2, name: "find-skills", author: "@JimLiuxinghai", downloads: "185k", stars: "774", type: "免费", desc: "技能发现与安装" },
+      { rank: 3, name: "summarize", author: "@steipete", downloads: "142k", stars: "552", type: "免费", desc: "URL/文件摘要" },
+      { rank: 4, name: "agent-browser", author: "@TheSethRose", downloads: "117k", stars: "522", type: "免费", desc: "浏览器自动化" },
+      { rank: 5, name: "gog", author: "@steipete", downloads: "108k", stars: "708", type: "Google API", desc: "Google Workspace CLI" },
+      { rank: 6, name: "github", author: "@steipete", downloads: "101k", stars: "328", type: "免费", desc: "GitHub CLI" },
+      { rank: 7, name: "ontology", author: "@oswalpalash", downloads: "98.4k", stars: "252", type: "免费", desc: "知识图谱" },
+      { rank: 8, name: "proactive-agent", author: "@halthelobster", downloads: "91.1k", stars: "525", type: "免费", desc: "主动式代理" },
+      { rank: 9, name: "weather", author: "@steipete", downloads: "87k", stars: "271", type: "免费(无需API)", desc: "天气查询" },
+      { rank: 10, name: "skill-vetter", author: "@spclaudehome", downloads: "76.4k", stars: "297", type: "免费", desc: "技能安全审查" },
+      { rank: 11, name: "self-improving", author: "@ivangdavila", downloads: "58.1k", stars: "282", type: "免费", desc: "自我改进代理" },
+      { rank: 12, name: "sonoscli", author: "@steipete", downloads: "55.8k", stars: "38", type: "免费", desc: "Sonos 音箱控制" },
+      { rank: 13, name: "nano-pdf", author: "@steipete", downloads: "54.1k", stars: "123", type: "免费", desc: "PDF 编辑" },
+      { rank: 14, name: "notion", author: "@steipete", downloads: "52.2k", stars: "179", type: "Notion API", desc: "Notion API" },
+      { rank: 15, name: "humanizer", author: "@biostartechnology", downloads: "50k", stars: "378", type: "免费", desc: "AI 文风人性化" },
+      { rank: 16, name: "obsidian", author: "@steipete", downloads: "47.7k", stars: "193", type: "免费", desc: "Obsidian 笔记" },
+      { rank: 17, name: "nano-banana-pro", author: "@steipete", downloads: "46.3k", stars: "193", type: "付费(Gemini)", desc: "AI 图像生成" },
+      { rank: 18, name: "multi-search-engine", author: "@gpyAngyoujun", downloads: "43.8k", stars: "236", type: "免费(无需API)", desc: "多搜索引擎" },
+      { rank: 19, name: "openai-whisper", author: "@steipete", downloads: "42.6k", stars: "198", type: "免费(本地)", desc: "本地语音转文字" },
+      { rank: 20, name: "api-gateway", author: "@byungkyu", downloads: "41.2k", stars: "205", type: "OAuth", desc: "100+ API 网关" },
+      { rank: 21, name: "auto-updater", author: "@maximeprades", downloads: "40.5k", stars: "253", type: "免费", desc: "自动更新" },
+      { rank: 22, name: "brave-search", author: "@steipete", downloads: "37.2k", stars: "142", type: "Brave API", desc: "Brave 搜索" },
+      { rank: 23, name: "skill-creator", author: "@chindden", downloads: "37.2k", stars: "127", type: "免费", desc: "技能创建指南" },
+      { rank: 24, name: "automation-workflows", author: "@JK-0001", downloads: "35.9k", stars: "160", type: "免费", desc: "自动化工作流" },
+      { rank: 25, name: "baidu-search", author: "@ide-rea", downloads: "35.7k", stars: "82", type: "免费", desc: "百度搜索" },
+      { rank: 26, name: "mcporter", author: "@steipete", downloads: "34.9k", stars: "101", type: "免费", desc: "MCP 服务器" },
+      { rank: 27, name: "free-ride", author: "@Shaivpidadi", downloads: "34k", stars: "254", type: "免费", desc: "免费 AI 模型" },
+      { rank: 28, name: "openclaw-youtube-transcript", author: "@YoavRez", downloads: "31.4k", stars: "16", type: "免费", desc: "YouTube 字幕提取" },
+      { rank: 29, name: "outlook-graph", author: "@c36025251-pixel", downloads: "30.4k", stars: "2", type: "Microsoft Graph", desc: "Outlook 集成" },
+      { rank: 30, name: "humanize-ai-text", author: "@moltbro", downloads: "29.4k", stars: "135", type: "免费", desc: "AI 文本人性化" },
+      { rank: 31, name: "youtube-watcher", author: "@Michaelgathara", downloads: "28.6k", stars: "206", type: "免费", desc: "YouTube 观看" },
+      { rank: 32, name: "elite-longterm-memory", author: "@NextFrontierBuilds", downloads: "28.5k", stars: "122", type: "免费", desc: "长期记忆系统" },
+      { rank: 33, name: "stock-analysis", author: "@udiedrichsen", downloads: "28.4k", stars: "144", type: "Yahoo Finance", desc: "股票分析" },
+      { rank: 34, name: "clawddocs", author: "@NicholasSpisak", downloads: "27.6k", stars: "250", type: "免费", desc: "文档专家" },
+      { rank: 35, name: "desktop-control", author: "@matagul", downloads: "26.3k", stars: "185", type: "免费", desc: "桌面自动化" },
+      { rank: 36, name: "slack", author: "@steipete", downloads: "25.8k", stars: "87", type: "免费", desc: "Slack 控制" },
+      { rank: 37, name: "video-frames", author: "@steipete", downloads: "25.2k", stars: "70", type: "免费", desc: "视频帧提取" },
+      { rank: 38, name: "trello", author: "@steipete", downloads: "24.1k", stars: "98", type: "免费", desc: "Trello 管理" },
+      { rank: 39, name: "browser-use", author: "@ShawnPana", downloads: "23.9k", stars: "59", type: "API", desc: "浏览器自动化" },
+      { rank: 40, name: "blogwatcher", author: "@steipete", downloads: "23.8k", stars: "40", type: "免费", desc: "博客监控" },
+      { rank: 41, name: "model-usage", author: "@steipete", downloads: "23.4k", stars: "85", type: "免费", desc: "模型使用统计" },
+      { rank: 42, name: "gmail", author: "@byungkyu", downloads: "23.2k", stars: "60", type: "Gmail API", desc: "Gmail 集成" },
+      { rank: 43, name: "imap-smtp-email", author: "@gzlicanyi", downloads: "22.6k", stars: "54", type: "免费", desc: "邮件客户端" },
+      { rank: 44, name: "news-summary", author: "@joargp", downloads: "22.2k", stars: "69", type: "免费", desc: "新闻摘要" },
+      { rank: 45, name: "youtube-api-skill", author: "@byungkyu", downloads: "22k", stars: "115", type: "YouTube API", desc: "YouTube API" },
+      { rank: 46, name: "gemini", author: "@steipete", downloads: "20.8k", stars: "42", type: "免费", desc: "Gemini CLI" },
+      { rank: 47, name: "playwright-mcp", author: "@Spiceman161", downloads: "20.7k", stars: "79", type: "免费", desc: "Playwright MCP" },
+      { rank: 48, name: "markdown-converter", author: "@steipete", downloads: "20k", stars: "109", type: "免费", desc: "文档转换" },
+      { rank: 49, name: "browser-automation", author: "@peytoncasper", downloads: "19.8k", stars: "27", type: "API", desc: "浏览器自动化" },
+      { rank: 50, name: "qmd", author: "@steipete", downloads: "19.6k", stars: "70", type: "免费", desc: "本地搜索" }
+    ];
+
+    const skillsShData = [
+      { rank: 1, name: "find-skills", author: "vercel-labs/skills", downloads: "519.6K", stars: "-", type: "免费", desc: "技能发现与安装" },
+      { rank: 2, name: "vercel-react-best-practices", author: "vercel-labs/agent-skills", downloads: "201.9K", stars: "-", type: "免费", desc: "React 最佳实践" },
+      { rank: 3, name: "web-design-guidelines", author: "vercel-labs/agent-skills", downloads: "158.5K", stars: "-", type: "免费", desc: "网页设计指南" },
+      { rank: 4, name: "frontend-design", author: "anthropics/skills", downloads: "148.4K", stars: "-", type: "免费", desc: "前端设计" },
+      { rank: 5, name: "remotion-best-practices", author: "remotion-dev/skills", downloads: "140.3K", stars: "-", type: "免费", desc: "Remotion 视频最佳实践" },
+      { rank: 6, name: "azure-ai", author: "microsoft/github-copilot-for-azure", downloads: "132.8K", stars: "-", type: "Azure API", desc: "Azure AI 服务" },
+      { rank: 7, name: "azure-storage", author: "microsoft/github-copilot-for-azure", downloads: "131.9K", stars: "-", type: "Azure API", desc: "Azure 存储" },
+      { rank: 8, name: "azure-deploy", author: "microsoft/github-copilot-for-azure", downloads: "131.9K", stars: "-", type: "Azure API", desc: "Azure 部署" },
+      { rank: 9, name: "azure-cost-optimization", author: "microsoft/github-copilot-for-azure", downloads: "131.9K", stars: "-", type: "Azure API", desc: "Azure 成本优化" },
+      { rank: 10, name: "azure-diagnostics", author: "microsoft/github-copilot-for-azure", downloads: "131.8K", stars: "-", type: "Azure API", desc: "Azure 诊断" },
+      { rank: 11, name: "entra-app-registration", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure AD", desc: "Entra ID 应用注册" },
+      { rank: 12, name: "appinsights-instrumentation", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure API", desc: "App Insights 集成" },
+      { rank: 13, name: "azure-compliance", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure API", desc: "Azure 合规" },
+      { rank: 14, name: "azure-resource-visualizer", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure API", desc: "Azure 资源可视化" },
+      { rank: 15, name: "azure-rbac", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure RBAC", desc: "Azure 角色权限" },
+      { rank: 16, name: "azure-prepare", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure API", desc: "Azure 准备" },
+      { rank: 17, name: "azure-kusto", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure Kusto", desc: "Kusto 查询" },
+      { rank: 18, name: "azure-validate", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure API", desc: "Azure 验证" },
+      { rank: 19, name: "azure-aigateway", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure AI Gateway", desc: "AI 网关" },
+      { rank: 20, name: "azure-resource-lookup", author: "microsoft/github-copilot-for-azure", downloads: "131.7K", stars: "-", type: "Azure API", desc: "资源查找" },
+      { rank: 21, name: "microsoft-foundry", author: "microsoft/github-copilot-for-azure", downloads: "131.6K", stars: "-", type: "Microsoft Foundry", desc: "Microsoft Foundry" },
+      { rank: 22, name: "sleek-design-mobile-apps", author: "sleekdotdesign/agent-skills", downloads: "129.2K", stars: "-", type: "付费服务", desc: "移动应用设计" },
+      { rank: 23, name: "azure-messaging", author: "microsoft/github-copilot-for-azure", downloads: "119.8K", stars: "-", type: "Azure API", desc: "Azure 消息服务" },
+      { rank: 24, name: "azure-observability", author: "microsoft/github-copilot-for-azure", downloads: "115.5K", stars: "-", type: "Azure API", desc: "Azure 可观测性" },
+      { rank: 25, name: "agent-browser", author: "vercel-labs/agent-browser", downloads: "92.8K", stars: "-", type: "免费", desc: "浏览器自动化" },
+      { rank: 26, name: "vercel-composition-patterns", author: "vercel-labs/agent-skills", downloads: "81K", stars: "-", type: "免费", desc: "Vercel 组合模式" },
+      { rank: 27, name: "skill-creator", author: "anthropics/skills", downloads: "77.6K", stars: "-", type: "免费", desc: "技能创建指南" },
+      { rank: 28, name: "azure-compute", author: "microsoft/github-copilot-for-azure", downloads: "67.5K", stars: "-", type: "Azure API", desc: "Azure 计算服务" },
+      { rank: 29, name: "ui-ux-pro-max", author: "nextlevelbuilder/ui-ux-pro-max-skill", downloads: "58.1K", stars: "-", type: "付费", desc: "UI/UX 设计" },
+      { rank: 30, name: "vercel-react-native-skills", author: "vercel-labs/agent-skills", downloads: "56.7K", stars: "-", type: "免费", desc: "React Native 技能" },
+      { rank: 31, name: "azure-cloud-migrate", author: "microsoft/github-copilot-for-azure", downloads: "56.3K", stars: "-", type: "Azure API", desc: "Azure 云迁移" },
+      { rank: 32, name: "brainstorming", author: "obra/superpowers", downloads: "51.6K", stars: "-", type: "免费", desc: "头脑风暴" },
+      { rank: 33, name: "browser-use", author: "browser-use/browser-use", downloads: "48.4K", stars: "-", type: "API", desc: "浏览器自动化" },
+      { rank: 34, name: "seo-audit", author: "coreyhaines31/marketingskills", downloads: "40.4K", stars: "-", type: "免费", desc: "SEO 审计" },
+      { rank: 35, name: "pdf", author: "anthropics/skills", downloads: "35.6K", stars: "-", type: "API", desc: "PDF 处理" },
+      { rank: 36, name: "azure-postgres", author: "microsoft/github-copilot-for-azure", downloads: "34.8K", stars: "-", type: "Azure API", desc: "Azure PostgreSQL" },
+      { rank: 37, name: "audit-website", author: "squirrelscan/skills", downloads: "34.1K", stars: "-", type: "免费", desc: "网站审计" },
+      { rank: 38, name: "copywriting", author: "coreyhaines31/marketingskills", downloads: "33.6K", stars: "-", type: "免费", desc: "文案写作" },
+      { rank: 39, name: "supabase-postgres-best-practices", author: "supabase/agent-skills", downloads: "32.7K", stars: "-", type: "Supabase API", desc: "Supabase 最佳实践" },
+      { rank: 40, name: "next-best-practices", author: "vercel-labs/next-skills", downloads: "32.2K", stars: "-", type: "免费", desc: "Next.js 最佳实践" },
+      { rank: 41, name: "microsoft-foundry", author: "microsoft/azure-skills", downloads: "31.5K", stars: "-", type: "Microsoft Foundry", desc: "Microsoft Foundry" },
+      { rank: 42, name: "pptx", author: "anthropics/skills", downloads: "31.4K", stars: "-", type: "API", desc: "PPTX 处理" },
+      { rank: 43, name: "azure-ai", author: "microsoft/azure-skills", downloads: "31.3K", stars: "-", type: "Azure API", desc: "Azure AI" },
+      { rank: 44, name: "ai-image-generation", author: "inference-shell/skills", downloads: "21.4K", stars: "-", type: "API Token", desc: "AI 图像生成" },
+      { rank: 45, name: "qwen-image-2", author: "inference-shell/skills", downloads: "21.1K", stars: "-", type: "阿里云 API", desc: "通义千问图像" },
+      { rank: 46, name: "agent-browser", author: "inference-shell/skills", downloads: "21.1K", stars: "-", type: "API Token", desc: "浏览器自动化" },
+      { rank: 47, name: "ai-video-generation", author: "inference-shell/skills", downloads: "21.1K", stars: "-", type: "API Token", desc: "AI 视频生成" },
+      { rank: 48, name: "nano-banana", author: "inference-shell/skills", downloads: "21K", stars: "-", type: "API Token", desc: "AI 图像" },
+      { rank: 49, name: "qwen-image-2-pro", author: "inference-shell/skills", downloads: "21K", stars: "-", type: "阿里云 API", desc: "通义千问图像专业版" },
+      { rank: 50, name: "nano-banana-2", author: "inference-shell/skills", downloads: "20.9K", stars: "-", type: "API Token", desc: "AI 图像" }
+    ];
+
+    let currentTab = 'clawhub';
+
+    function getTypeColor(type) {
+      if (type.includes('免费') || type === '免费') return 'bg-green-500/20 text-green-400';
+      if (type.includes('Azure') || type.includes('Microsoft')) return 'bg-blue-500/20 text-blue-400';
+      if (type.includes('API') || type.includes('Token')) return 'bg-orange-500/20 text-orange-400';
+      return 'bg-gray-500/20 text-gray-400';
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('skills-table');
+      tbody.innerHTML = data.map(item => `
+        <tr class="hover:bg-gray-700/30 transition-colors">
+          <td class="px-4 py-3 font-medium">${item.rank}</td>
+          <td class="px-4 py-3">
+            <div class="font-medium text-indigo-400">${item.name}</div>
+            <div class="text-xs text-gray-500">${item.desc}</div>
+          </td>
+          <td class="px-4 py-3 text-gray-400 text-sm">${item.author}</td>
+          <td class="px-4 py-3 font-semibold">${item.downloads}</td>
+          <td class="px-4 py-3 text-yellow-400">${item.stars}</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-1 rounded-full text-xs ${getTypeColor(item.type)}">${item.type}</span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      
+      // Update tabs
+      document.getElementById('tab-clawhub').className = tab === 'clawhub' 
+        ? 'px-4 py-2 rounded-lg font-medium transition-all tab-active' 
+        : 'px-4 py-2 rounded-lg font-medium bg-gray-800 hover:bg-gray-700 transition-all';
+      document.getElementById('tab-skillssh').className = tab === 'skillssh'
+        ? 'px-4 py-2 rounded-lg font-medium transition-all tab-active'
+        : 'px-4 py-2 rounded-lg font-medium bg-gray-800 hover:bg-gray-700 transition-all';
+
+      // Update stats
+      if (tab === 'clawhub') {
+        document.getElementById('total-skills').textContent = '21,576';
+        document.getElementById('free-ratio').textContent = '55%';
+        document.getElementById('paid-ratio').textContent = '45%';
+        document.getElementById('top-downloads').textContent = '190K';
+        document.getElementById('table-title').textContent = 'ClawHub Top 50 Skills';
+        document.getElementById('free-badge').textContent = '28 免费';
+        document.getElementById('paid-badge').textContent = '22 付费';
+        renderTable(clawhubData);
+      } else {
+        document.getElementById('total-skills').textContent = '88,031';
+        document.getElementById('free-ratio').textContent = '45%';
+        document.getElementById('paid-ratio').textContent = '55%';
+        document.getElementById('top-downloads').textContent = '519.6K';
+        document.getElementById('table-title').textContent = 'Skills.sh Top 50 Skills';
+        document.getElementById('free-badge').textContent = '18 免费';
+        document.getElementById('paid-badge').textContent = '32 付费';
+        renderTable(skillsShData);
+      }
+    }
+
+    // Initial render
+    renderTable(clawhubData);
+  </script>
 </body>
 </html>
